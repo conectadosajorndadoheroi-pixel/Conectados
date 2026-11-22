@@ -777,7 +777,7 @@ body.vp2 .vp-cover{display:block;position:absolute;inset:0;z-index:2;text-align:
 .vp-go{background:transparent!important;color:#fff!important;border-color:#B388FF!important;box-shadow:6px 6px 0 #6b3fd6!important}
 .vp-c{font:600 10px ui-monospace,monospace;letter-spacing:1px;color:rgba(255,255,255,.42);margin:16px 0 0}
 /* ---- o site inteiro "infectado" ---- */
-body.vp2 .vp-fx{display:block;position:fixed;inset:0;pointer-events:none;z-index:9990;background:repeating-linear-gradient(0deg,rgba(40,10,90,.07) 0 1px,transparent 1px 4px)}
+body.vp2:not(.vp-done) .vp-fx{display:block;position:fixed;inset:0;pointer-events:none;z-index:9990;background:repeating-linear-gradient(0deg,rgba(40,10,90,.07) 0 1px,transparent 1px 4px)}
 body.vp2 .vp-fx::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 120px rgba(60,20,120,.35)}
 .vp-band{position:absolute;left:0;right:0;height:0;top:40%;opacity:0;-webkit-backdrop-filter:hue-rotate(150deg) saturate(2.4) contrast(1.3);backdrop-filter:hue-rotate(150deg) saturate(2.4) contrast(1.3);border-top:1px solid rgba(179,136,255,.7)}
 .vp-band.b2{-webkit-backdrop-filter:invert(.85) hue-rotate(200deg);backdrop-filter:invert(.85) hue-rotate(200deg)}
@@ -1638,16 +1638,16 @@ function type(){if(i>=L.length)return;var ln=L[i][0];c++;var cur=esc(ln.slice(0,
  if(c>=ln.length){html+=(L[i][1]?'<span class="'+L[i][1]+'">'+esc(ln)+'</span>':esc(ln))+'\n';i++;c=0;setTimeout(type,520);}else setTimeout(type,RM?0:28);}
 if(RM){L.forEach(function(x){html+=(x[1]?'<span class="'+x[1]+'">'+esc(x[0])+'</span>':esc(x[0]))+'\n'});log.innerHTML=html;}else setTimeout(type,700);
 function rnd(a,b){return a+Math.random()*(b-a)}
-function hitCover(){if(!cov)return;var k=Math.random()<.5?'hit':'hit2';cov.classList.add(k);setTimeout(function(){cov.classList.remove(k);if(Math.random()<.6){cov.classList.add('hit2');setTimeout(function(){cov.classList.remove('hit2')},70)}},110);
+function hitCover(){if(!cov||done())return;var k=Math.random()<.5?'hit':'hit2';cov.classList.add(k);setTimeout(function(){cov.classList.remove(k);if(Math.random()<.6){cov.classList.add('hit2');setTimeout(function(){cov.classList.remove('hit2')},70)}},110);
  setTimeout(hitCover,rnd(done()?5000:2200,done()?9000:5200));}
 if(!RM)setTimeout(hitCover,1800);
 var R=document.documentElement;
-function hitPage(){if(window.scrollY>innerHeight*.6){R.style.setProperty('--y',rnd(10,85)+'%');R.style.setProperty('--h',rnd(6,26)+'px');R.style.setProperty('--y2',rnd(10,90)+'%');R.style.setProperty('--h2',rnd(2,9)+'px');R.style.setProperty('--dx',(Math.random()<.5?-1:1)*rnd(2,5)+'px');
+function hitPage(){if(done())return;if(window.scrollY>innerHeight*.6){R.style.setProperty('--y',rnd(10,85)+'%');R.style.setProperty('--h',rnd(6,26)+'px');R.style.setProperty('--y2',rnd(10,90)+'%');R.style.setProperty('--h2',rnd(2,9)+'px');R.style.setProperty('--dx',(Math.random()<.5?-1:1)*rnd(2,5)+'px');
  R.classList.add('vp-hit');setTimeout(function(){R.classList.remove('vp-hit')},rnd(90,170));}
  setTimeout(hitPage,rnd(done()?14000:7000,done()?24000:13000));}
 if(!RM)setTimeout(hitPage,6000);
 var G='▓▒░01#$%&@/\\<>';
-function scramble(){var els=[].slice.call(document.querySelectorAll('h2,h3,.kick')).filter(function(e){var r=e.getBoundingClientRect();return r.top>60&&r.bottom<innerHeight-40&&!e.closest('.vp-cover')&&!e.closest('[hidden]')});
+function scramble(){if(done())return;var els=[].slice.call(document.querySelectorAll('h2,h3,.kick')).filter(function(e){var r=e.getBoundingClientRect();return r.top>60&&r.bottom<innerHeight-40&&!e.closest('.vp-cover')&&!e.closest('[hidden]')});
  if(els.length){var e=els[Math.floor(Math.random()*els.length)];var tw=document.createTreeWalker(e,NodeFilter.SHOW_TEXT),ns=[],n;while(n=tw.nextNode())if(n.nodeValue.trim())ns.push(n);
   var orig=ns.map(function(x){return x.nodeValue}),f=0;if(!e.hasAttribute('aria-label'))e.setAttribute('aria-label',e.textContent.trim());e.classList.add('vp-cor');
   var iv=setInterval(function(){f++;ns.forEach(function(x,j){var o=orig[j];x.nodeValue=o.split('').map(function(ch){return ch===' '||Math.random()>.35?ch:G[Math.floor(Math.random()*G.length)]}).join('')});
@@ -1658,9 +1658,9 @@ var MS=done()?['restauração concluída · Nº 001 Parte 2 já no feed','ele le
  :['memória restaurada parcialmente','aviso: este site está sendo reescrito','ele lembra de tudo. só não sente.','o mesmo, e não o mesmo','arquivo Nº 001 · Parte 2 · domingo, 18h'];
 var to=document.querySelector('.vp-toast'),msg=document.getElementById('vp-msg'),mi=0,closed=false;
 to.querySelector('.vp-x').addEventListener('click',function(){closed=true;to.classList.remove('on')});
-function toast(){if(closed)return;if(window.scrollY>innerHeight*.5){msg.textContent=MS[mi++%MS.length];to.classList.add('on');setTimeout(function(){to.classList.remove('on')},5200);}setTimeout(toast,rnd(11000,17000));}
+function toast(){if(closed||done())return;if(window.scrollY>innerHeight*.5){msg.textContent=MS[mi++%MS.length];to.classList.add('on');setTimeout(function(){to.classList.remove('on')},5200);}setTimeout(toast,rnd(11000,17000));}
 setTimeout(toast,9000);
-var T0=document.title;document.addEventListener('visibilitychange',function(){document.title=document.hidden?(done()?'ele lembra. ▓':'VISÃO.bak — não responde ▓'):T0;});
+var T0=document.title;document.addEventListener('visibilitychange',function(){document.title=(document.hidden&&!done())?'VISÃO.bak — não responde ▓':T0;});
 
 var FR=["A HQ mostrou o Visão trancado dentro do próprio sistema. Este aprofundamento desce até a causa raiz: o medo por trás do luto, a porta trancada por dentro e a voz que chama de fora.", "01 · CAUSA RAIZ", "O medo de ser ninguém", "Por baixo do luto há amor, e por baixo do amor ferido há medo. Não só o medo de sofrer de novo, mas um medo mais fundo: o de que, sem quem amamos, não sobre ninguém. Quando a nossa identidade foi toda construída em cima de uma relação, perder essa relação parece perder o próprio chão.", "É aí que o coração toma a decisão do Visão: “amar sempre leva à perda”. Ele tranca a porta e chama isso de proteção. Mas uma porta que não abre para ninguém deixa de ser porta e vira parede. O que nasceu para guardar acaba isolando.", "02 · BUG", "Curvado sobre si", "Agostinho descreveu a ferida da alma como um amor que se volta para si e se fecha para Deus e para os outros. Em A Cidade de Deus, ele fala de dois amores que constroem duas cidades: o amor de Deus até o esquecimento de si, e o amor de si até o desprezo de Deus (XIV, 28). Séculos depois, a teologia condensou essa intuição numa expressão latina: incurvatus in se, “curvado sobre si”. A fórmula não é de Agostinho, mas nasce da leitura dele.", "O Visão confessa o diagnóstico com as próprias palavras: “a única força poderosa o suficiente para me aprisionar sou eu mesmo”. A prisão mais difícil não tem grade por fora. Tem trava por dentro. E quanto mais o coração olha para dentro procurando a saída, mais se enrola no próprio loop. Por isso força de vontade não basta: alguém precisa chamar de fora.", "03 · PATCH", "O amor como êxodo", "O Visão tem medo de, sem a Wanda, deixar de ser ele mesmo. A fé responde com um paradoxo: é justamente ao sair de si que a pessoa se encontra. Bento XVI chama o amor de êxodo."];var M=document.getElementById('vpm'),art=document.getElementById('vpm-art'),last=null,tries=0;
 function corrupt(s,keep){return s.split(' ').map(function(w){var r=Math.random();if(r<keep)return w.replace(/&/g,'&amp;').replace(/</g,'&lt;');
@@ -1829,9 +1829,9 @@ var MS=done()?['Reator estabilizado. Nº 002 liberado.','A porta está aberta, c
  :['Chefe, a blindagem não vai segurar por muito tempo.','Sobrecarga no reator. Protocolo de contenção ativo.','Arquivo Nº 002 selado até quarta, às 8h.','Fiz todos os cálculos. Nenhum resolve isso.','Recomendo não tocar na porta. Sério.'];
 var to=document.querySelector('.tk-toast'),msg=document.getElementById('tk-msg'),mi=0,closed=false;
 to.querySelector('.tk-x').addEventListener('click',function(){closed=true;to.classList.remove('on')});
-function toast(){if(closed)return;if(scrollY>innerHeight*.5){msg.textContent=MS[mi++%MS.length];to.classList.add('on');setTimeout(function(){to.classList.remove('on')},5200);}setTimeout(toast,rnd(12000,18000));}
+function toast(){if(closed||done())return;if(scrollY>innerHeight*.5){msg.textContent=MS[mi++%MS.length];to.classList.add('on');setTimeout(function(){to.classList.remove('on')},5200);}setTimeout(toast,rnd(12000,18000));}
 setTimeout(toast,9000);
-var T0=document.title;document.addEventListener('visibilitychange',function(){document.title=document.hidden?(done()?'reator estável ◉':'⚡ sobrecarga — Conectados'):T0;});
+var T0=document.title;document.addEventListener('visibilitychange',function(){document.title=(document.hidden&&!done())?'⚡ sobrecarga — Conectados':T0;});
 /* ---------- clique na HQ selada: curto-circuito ---------- */
 var M=document.getElementById('tkm'),log=document.getElementById('tkm-log'),last=null,tries=0;
 var LG=[['> iniciando religamento do arquivo Nº 002…',''],['> bobina 1: ok','ok'],['> bobina 2: curto-circuito',''],['> blindagem: 12%',''],['> ERRO: a armadura não aguenta sozinha.','']];
